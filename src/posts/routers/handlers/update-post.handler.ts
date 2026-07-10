@@ -1,0 +1,21 @@
+import {type Request, type Response} from 'express';
+import { type BlogInputDto } from '../../dto/blog.input.dto.js';
+import { HttpStatus } from '../../../core/constants/http-statuses.js';
+import { createErrorMessages } from '../../../core/middlewares/validation/input-validation-result.middleware';
+import { blogsRepository } from '../../repositories/blogs.repository.js';
+
+export function updatePostHandler(
+        req: Request<{ id: string }, {}, BlogInputDto>,
+        res: Response,
+) {
+    // Тело и id уже проверены middleware-валидаторами.
+    // Репозиторий вернёт false, если блог с таким id не найден.
+    const isUpdated = blogsRepository.update(req.params.id, req.body);
+
+    if (!isUpdated) {
+        res.status(HttpStatus.NotFound).send(createErrorMessages([{ field: 'id', message: 'Driver not found' }]));
+        return;
+    }
+
+    res.sendStatus(HttpStatus.NoContent);
+};
