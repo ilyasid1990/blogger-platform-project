@@ -1,6 +1,5 @@
 import {type Request, type Response} from 'express';
 import {HttpStatus} from '../../../core/constants/http-statuses.js';
-import {createErrorMessages} from '../../../core/middlewares/validation/input-validation-result.middleware';
 import {blogsRepository} from '../../repositories/blogs.repository.js';
 
 export function deleteBlogHandler(
@@ -11,9 +10,9 @@ export function deleteBlogHandler(
     const isDeleted = blogsRepository.delete(req.params.id);
 
     if (!isDeleted) {
-        res.status(HttpStatus.NotFound).send(createErrorMessages([{field: 'id', message: 'Blog not found'}]));
+        res.sendStatus(HttpStatus.NotFound);
         return;
     }
 
     res.sendStatus(HttpStatus.NoContent);
-}
+};

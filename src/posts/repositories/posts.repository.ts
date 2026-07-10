@@ -23,7 +23,7 @@ export const postsRepository = {
         const blogName = foundBlog ? foundBlog.name : "Unknown Blog";
 
         const created: Post = {
-            id: String(nextId),  // Добавляем сгенерированный ID в конец
+            id: String(nextId),  // Добавляем сгенерированный ID
             blogName: blogName,  // Добавляем найденное имя блога
             ...newPost,         // Распаковываем title, shortDescription, content, blogId
         };
@@ -34,6 +34,7 @@ export const postsRepository = {
 
     // Принимает доменные поля (без служебных id/createdAt).
     // Возвращает true, если блог найден и обновлён, иначе false.
+
     update(id: string, post: Omit<Post, 'id' | 'blogName'>): boolean {
         const index = db.posts.findIndex((b) => b.id === id);
 
