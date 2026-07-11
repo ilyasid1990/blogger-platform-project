@@ -2,6 +2,8 @@ import express, {type Express, type Request, type Response} from "express";
 import {HttpStatus} from "./core/constants/http-statuses.js";
 import {BLOGS_PATH} from "./blogs/constants/blogs.paths.js";
 import {POSTS_PATH} from "./posts/constants/posts.paths.js";
+import {blogsRouter} from "./blogs/routers/blogs.router.js";
+import {postsRouter} from "./posts/routers/posts.router.js";
 
 
 export const setupApp = (app: Express) => {
