@@ -5,7 +5,7 @@ import {HttpStatus} from '../constants/http-statuses.js';
 
 // Оборачивает список ошибок в единый формат ответа: { errorMessages: [...] }.
 export const createErrorMessages = (errors: ValidationErrorType[]): ValidationErrorDto => {
-  return {errorMessages: errors};
+  return {errorsMessages: errors};
 };
 
 // Приводит ошибку express-validator к нашему формату { field, message }.
@@ -31,7 +31,7 @@ export const inputValidationResultMiddleware = (
     .array({onlyFirstError: true});
 
   if (errors.length > 0) {
-    res.status(HttpStatus.BadRequest).json({errorMessages: errors});
+    res.status(HttpStatus.BadRequest).json({errorsMessages: errors});
     return;
   }
 
