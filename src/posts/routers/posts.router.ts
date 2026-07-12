@@ -7,13 +7,11 @@ import {deletePostHandler} from './handlers/delete-post.handler.js';
 import { idValidation } from '../../core/middlewares-validation/params-id.validation.middleware.js';
 import { inputValidationResultMiddleware } from '../../core/middlewares-validation/input-validation-result.middleware.js';
 import { postInputDtoValidation } from '../validation/post.input-dto.validation-middleware.js';
-// import { superAdminGuardMiddleware } from '../../auth/middlewares/super-admin.guard.middleware';
+import { superAdminGuardMiddleware } from '../../auth-middlewares/super-admin.guard.middleware.js';
 import {POSTS_ROUTES} from '../constants/posts.paths.js';
 
 export const postsRouter: Router = Router({});
 
-// Все эндпоинты водителей доступны только супер-админу (Basic Auth).
-postsRouter.use(superAdminGuardMiddleware);
 
 // Каждая цепочка: валидация -> проверка её результата -> handler.
 // Пути маршрутов берём из констант модуля, а не из строковых литералов.
@@ -29,6 +27,7 @@ postsRouter
 
   .post(
     POSTS_ROUTES.ROOT,
+    superAdminGuardMiddleware,
     postInputDtoValidation,
     inputValidationResultMiddleware,
     createPostHandler,
@@ -36,6 +35,7 @@ postsRouter
 
   .put(
     POSTS_ROUTES.BY_ID,
+    superAdminGuardMiddleware,
     idValidation,
     postInputDtoValidation,
     inputValidationResultMiddleware,
@@ -44,6 +44,7 @@ postsRouter
 
   .delete(
     POSTS_ROUTES.BY_ID,
+    superAdminGuardMiddleware,
     idValidation,
     inputValidationResultMiddleware,
     deletePostHandler,

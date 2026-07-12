@@ -7,13 +7,11 @@ import { deleteBlogHandler } from './handlers/delete-blog.handler.js';
 import { idValidation } from '../../core/middlewares-validation/params-id.validation.middleware.js';
 import { inputValidationResultMiddleware } from '../../core/middlewares-validation/input-validation-result.middleware.js';
 import { blogInputDtoValidation } from '../validation/blog.input-dto.validation-middlewares.js';
-// import { superAdminGuardMiddleware } from '../../auth/middlewares/super-admin.guard.middleware';
+import { superAdminGuardMiddleware } from '../../auth-middlewares/super-admin.guard.middleware.js';
 import { BLOGS_ROUTES } from '../constants/blogs.paths.js';
 
 export const blogsRouter: Router = Router({});
 
-// Все эндпоинты водителей доступны только супер-админу (Basic Auth).
-blogsRouter.use(superAdminGuardMiddleware);
 
 // Каждая цепочка: валидация -> проверка её результата -> handler.
 // Пути маршрутов берём из констант модуля, а не из строковых литералов.
@@ -29,6 +27,7 @@ blogsRouter
 
         .post(
                 BLOGS_ROUTES.ROOT,
+                superAdminGuardMiddleware,
                 blogInputDtoValidation,
                 inputValidationResultMiddleware,
                 createBlogHandler,
@@ -36,6 +35,7 @@ blogsRouter
 
         .put(
                 BLOGS_ROUTES.BY_ID,
+                superAdminGuardMiddleware,
                 idValidation,
                 blogInputDtoValidation,
                 inputValidationResultMiddleware,
@@ -44,6 +44,7 @@ blogsRouter
 
         .delete(
                 BLOGS_ROUTES.BY_ID,
+                superAdminGuardMiddleware,
                 idValidation,
                 inputValidationResultMiddleware,
                 deleteBlogHandler,
