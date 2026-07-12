@@ -4,9 +4,11 @@ const titleValidation = body('title')
   .exists()
   .withMessage('Title is not exists')
   .isString()
-  .withMessage('Name should be string')
+  .withMessage('Title should be string')
   .trim()
-  .isLength({ min: 1, max: 30 })
+  .notEmpty()
+  .withMessage('Title can not be empty')
+  .isLength({ max: 30 })
   .withMessage('Length of title is not correct');
 
 const shortDescriptionValidation = body('shortDescription')
@@ -15,6 +17,8 @@ const shortDescriptionValidation = body('shortDescription')
   .isString()
   .withMessage('ShortDescription should be string')
   .trim()
+  .notEmpty()
+  .withMessage('ShortDescription can not be empty')
   .isLength({ min: 1, max: 100 })
   .withMessage('Length of shortDescription is not correct');
 
@@ -22,16 +26,20 @@ const contentValidation = body('content')
   .exists()
   .withMessage('Content is not exists')
   .isString()
-  .withMessage('content should be string')
+  .withMessage('Content should be string')
   .trim()
-  .isLength({ min: 1, max: 1000 })
+  .notEmpty()
+  .withMessage('Content can not be empty')
+  .isLength({ max: 1000 })
   .withMessage('Length of content is not correct');
 
 const blogIdValidation = body('blogId')
   .exists()
   .withMessage('BlogId is not exists')
   .isString()
-  .withMessage('blogId should be string');
+  .withMessage('BlogId should be string')
+  .notEmpty()
+  .withMessage('BlogId can not be empty');
 
 
 // Набор middleware-валидаторов тела запроса на создание/обновление блога.
