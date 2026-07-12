@@ -31,7 +31,9 @@ const websiteUrlValidation = body('websiteUrl')
   .notEmpty()
   .withMessage('WebsiteUrl can not be empty')
   .matches(/^https:\/\/([a-zA-Z0-9_-]+\.)+[a-zA-Z0-9_-]+(\/[a-zA-Z0-9_-]+)*\/?$/)
-  .withMessage('Invalid link format. The link must start with https://');
+  .withMessage('Invalid link format. The link must start with https://')
+  .isLength({ max: 100 })
+  .withMessage('Length of websiteUrl is not correct');
 
 
 // Набор middleware-валидаторов тела запроса на создание/обновление блога.

@@ -19,7 +19,7 @@ const shortDescriptionValidation = body('shortDescription')
   .trim()
   .notEmpty()
   .withMessage('ShortDescription can not be empty')
-  .isLength({ min: 1, max: 100 })
+  .isLength({ max: 100 })
   .withMessage('Length of shortDescription is not correct');
 
 const contentValidation = body('content')
