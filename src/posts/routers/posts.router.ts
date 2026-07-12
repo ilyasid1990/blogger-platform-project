@@ -6,7 +6,7 @@ import {updatePostHandler} from './handlers/update-post.handler.js';
 import {deletePostHandler} from './handlers/delete-post.handler.js';
 import { idValidation } from '../../core/middlewares-validation/params-id.validation.middleware.js';
 import { inputValidationResultMiddleware } from '../../core/middlewares-validation/input-validation-result.middleware.js';
-// import { driverInputDtoValidation } from '../validation/driver.input-dto.validation-middlewares';
+import { postInputDtoValidation } from '../validation/post.input-dto.validation-middleware.js';
 // import { superAdminGuardMiddleware } from '../../auth/middlewares/super-admin.guard.middleware';
 import {POSTS_ROUTES} from '../constants/posts.paths.js';
 
@@ -29,7 +29,7 @@ postsRouter
 
   .post(
     POSTS_ROUTES.ROOT,
-    driverInputDtoValidation,
+    postInputDtoValidation,
     inputValidationResultMiddleware,
     createPostHandler,
   )
@@ -37,7 +37,7 @@ postsRouter
   .put(
     POSTS_ROUTES.BY_ID,
     idValidation,
-    driverInputDtoValidation,
+    postInputDtoValidation,
     inputValidationResultMiddleware,
     updatePostHandler,
   )

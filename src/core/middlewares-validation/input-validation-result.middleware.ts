@@ -1,9 +1,6 @@
 import {type ValidationError, validationResult} from 'express-validator';
 import {type NextFunction, type Request, type Response} from 'express';
-import {
-  type ValidationErrorType,
-  type ValidationErrorDto
-} from '../types/validation-error.js';
+import {type ValidationErrorType, type ValidationErrorDto} from '../types/validation-error.js';
 import {HttpStatus} from '../constants/http-statuses.js';
 
 // Оборачивает список ошибок в единый формат ответа: { errorMessages: [...] }.

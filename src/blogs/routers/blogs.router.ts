@@ -6,7 +6,7 @@ import { updateBlogHandler } from './handlers/update-blog.handler.js';
 import { deleteBlogHandler } from './handlers/delete-blog.handler.js';
 import { idValidation } from '../../core/middlewares-validation/params-id.validation.middleware.js';
 import { inputValidationResultMiddleware } from '../../core/middlewares-validation/input-validation-result.middleware.js';
-// import { driverInputDtoValidation } from '../validation/driver.input-dto.validation-middlewares';
+import { blogInputDtoValidation } from '../validation/blog.input-dto.validation-middlewares.js';
 // import { superAdminGuardMiddleware } from '../../auth/middlewares/super-admin.guard.middleware';
 import { BLOGS_ROUTES } from '../constants/blogs.paths.js';
 
@@ -29,7 +29,7 @@ blogsRouter
 
         .post(
                 BLOGS_ROUTES.ROOT,
-                driverInputDtoValidation,
+                blogInputDtoValidation,
                 inputValidationResultMiddleware,
                 createBlogHandler,
         )
@@ -37,7 +37,7 @@ blogsRouter
         .put(
                 BLOGS_ROUTES.BY_ID,
                 idValidation,
-                driverInputDtoValidation,
+                blogInputDtoValidation,
                 inputValidationResultMiddleware,
                 updateBlogHandler,
         )
