@@ -4,6 +4,8 @@ import {BLOGS_PATH} from "./blogs/constants/blogs.paths.js";
 import {POSTS_PATH} from "./posts/constants/posts.paths.js";
 import {blogsRouter} from "./blogs/routers/blogs.router.js";
 import {postsRouter} from "./posts/routers/posts.router.js";
+import {TESTING_PATH} from "./testing/constants/testing.paths.js";
+import {testingRouter} from "./testing/routers/testing.router.js";
 
 
 export const setupApp = (app: Express) => {
