@@ -15,7 +15,7 @@ describe('Blog API body validation check', () => {
 
     const correctTestBlogData: BlogInputDto = {
         name: "IT-Incubator Tech Blog",
-        description: "Статьи о backend-разработке и TypeScript",
+        description: "Статьи о Веб-разработке на Node.js",
         websiteUrl: "https://it-incubator.io",
     };
 
