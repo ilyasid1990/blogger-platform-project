@@ -1,73 +1,44 @@
-import {type Post} from "../types/post.js";
-import {db} from "../../db/in-memory-db.js";
+import { type Post } from '../types/post.js';
+import { ObjectId, type WithId } from 'mongodb';
+import { postCollection } from '../../db/collections.js';
 
+// Репозиторий отвечает ТОЛЬКО за доступ к данным (CRUD).
+// Он не знает про HTTP и не решает, что делать при "не найдено":
+// операции изменения возвращают boolean, а решение о статусе ответа принимает handler.
 export const postsRepository = {
-    findAll(): Post[] {
-        return db.posts;
+    async findAll(): Promise<WithId<Post>[]> {
+        return postCollection.find().toArray();
     },
 
-    findById(id: string): Post | null {
-        // Если ничего не нашли, find вернёт undefined — приводим к null.
-        return db.posts.find((b) => b.id === id) ?? null;
+    async findById(id: string): Promise<WithId<Post> | null> {
+        return postCollection.findOne({ _id: new ObjectId(id) });
     },
 
-    // Принимает доменные поля без id (id генерируем здесь) и возвращает созданный пост.
-    create(newPost: Omit<Post, 'id' | 'blogName'>): Post {
-        const lastPost = db.posts[db.posts.length - 1];
-        const nextId = lastPost ? Number(lastPost.id) + 1 : 1;
-
-        // 1. Находим блог в базе данных по переданному blogId
-        const foundBlog = db.blogs.find((b) => b.id === newPost.blogId);
-
-        // 2. Берем имя блога, либо подставляем заглушку, если блог вдруг не найден
-        const blogName = foundBlog ? foundBlog.name : "Unknown Blog";
-
-        const created: Post = {
-            id: String(nextId),  // Добавляем сгенерированный ID
-            blogName: blogName,  // Добавляем найденное имя блога
-            ...newPost,         // Распаковываем title, shortDescription, content, blogId
-        };
-        db.posts.push(created);
-
-        return created;
+    async create(newPost: Post): Promise<WithId<Post>> {
+        const insertResult = await postCollection.insertOne(newPost);
+        return { ...newPost, _id: insertResult.insertedId };
     },
 
-    // Принимает доменные поля (без служебных id/createdAt).
-    // Возвращает true, если блог найден и обновлён, иначе false.
+    // Принимает уже готовый доменный объект (без createdAt) — маппинг из DTO делает handler.
+    // Возвращает true, если водитель найден и обновлён, иначе false.
+    async update(
+      id: string,
+      post: Omit<Post, 'blogName' | 'createdAt'>,
+    ): Promise<boolean> {
+        const updateResult = await postCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $set: post },
+        );
 
-    update(id: string, post: Omit<Post, 'id' | 'blogName'>): boolean {
-        const index = db.posts.findIndex((b) => b.id === id);
-
-        if (index === -1) {
-            return false;
-        }
-
-        // 1. Достаем текущий пост из базы данных
-        const currentPost = db.posts[index];
-
-        if (!currentPost) {
-            return false;
-        }
-        // 2. Обновляем поля, гарантируя сохранение id и оригинального blogName
-        db.posts[index] = {
-            ...currentPost,
-            ...post,
-            id: currentPost.id,         // Гарантируем сохранение ID
-            blogName: currentPost.blogName // Сохраняем имя блога, так как в 'post' его нет
-        };
-
-        return true;
+        return updateResult.matchedCount > 0;
     },
 
-    // Возвращает true, если пост найден и удалён, иначе false.
-    delete(id: string): boolean {
-        const index = db.posts.findIndex((b) => b.id === id);
+    // Возвращает true, если водитель найден и удалён, иначе false.
+    async delete(id: string): Promise<boolean> {
+        const deleteResult = await postCollection.deleteOne({
+            _id: new ObjectId(id),
+        });
 
-        if (index === -1) {
-            return false;
-        }
-
-        db.posts.splice(index, 1);
-        return true;
+        return deleteResult.deletedCount > 0;
     },
 };
