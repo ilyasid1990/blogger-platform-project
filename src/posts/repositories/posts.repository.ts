@@ -1,6 +1,6 @@
 import { type Post } from '../types/post.js';
 import { ObjectId, type WithId } from 'mongodb';
-import { postCollection } from '../../db/collections.js';
+import { postCollection, blogCollection  } from '../../db/collections.js';
 
 // Репозиторий отвечает ТОЛЬКО за доступ к данным (CRUD).
 // Он не знает про HTTP и не решает, что делать при "не найдено":
@@ -14,11 +14,29 @@ export const postsRepository = {
         return postCollection.findOne({ _id: new ObjectId(id) });
     },
 
-    async create(newPost: Post): Promise<WithId<Post>> {
-        const insertResult = await postCollection.insertOne(newPost);
-        return { ...newPost, _id: insertResult.insertedId };
-    },
+    async create(newPost: Omit<Post, 'blogName'>): Promise<WithId<Post>> {
+        // 1. Асинхронно находим блог в MongoDB по его blogId.
+        // Переводим строку newPost.blogId в ObjectId для корректного поиска.
+        const foundBlog = await blogCollection.findOne({ _id: new ObjectId(newPost.blogId) });
 
+        // 2. Берем имя блога или ставим заглушку, если блог не найден
+        const blogName = foundBlog ? foundBlog.name : "Unknown Blog";
+
+        // 3. Формируем объект для сохранения в MongoDB (без поля id, база сама создаст _id)
+        const postToInsert = {
+            ...newPost,
+            blogName: blogName,
+        };
+
+        // 4. Сохраняем в коллекцию. Кастуем к any, чтобы обойти строгие типы драйвера.
+        const insertResult = await postCollection.insertOne(postToInsert as any);
+
+        // 5. Возвращаем созданный объект вместе с сгенерированным MongoDB идентификатором _id
+        return {
+            ...postToInsert,
+            _id: insertResult.insertedId,
+        } as WithId<Post>;
+    },
     // Принимает уже готовый доменный объект (без createdAt) — маппинг из DTO делает handler.
     // Возвращает true, если водитель найден и обновлён, иначе false.
     async update(

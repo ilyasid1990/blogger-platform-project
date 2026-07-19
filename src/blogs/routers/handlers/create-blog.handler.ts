@@ -4,23 +4,24 @@ import { HttpStatus } from '../../../core/constants/http-statuses.js';
 import { type Blog } from '../../types/blog.js';
 import { blogsRepository } from '../../repositories/blogs.repository.js';
 import { mapToBlogViewModel } from '../mappers/map-to-blog-view-model.util.js';
-import { mapBlogInputDtoToBlog } from '../mappers/map-blog-input-dto-to-blog.util.js';
 
-export async function createDriverHandler(
-  req: Request<{}, {}, DriverInputDto>,
+export async function createBlogHandler(
+  req: Request<{}, {}, BlogInputDto>,
   res: Response,
 ) {
     try {
         // Проекция DTO -> доменная модель; дату создания добавляем здесь.
-        const newDriver: Driver = {
-            ...mapDriverInputDtoToDriver(req.body),
-            createdAt: new Date(),
+        const newBlog: Blog = {
+            ...req.body,
+            createdAt: new Date().toISOString(),
+            isMembership: true,
         };
 
-        const createdDriver = await driversRepository.create(newDriver);
-        const driverViewModel = mapToDriverViewModel(createdDriver);
-        res.status(HttpStatus.Created).send(driverViewModel);
+        const createdBlog = await blogsRepository.create(newBlog);
+        const blogViewModel = mapToBlogViewModel(createdBlog);
+        res.status(HttpStatus.Created).send(blogViewModel);
+
     } catch {
         res.sendStatus(HttpStatus.InternalServerError);
     }
-}
+};
